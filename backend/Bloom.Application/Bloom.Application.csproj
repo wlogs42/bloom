@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../Bloom.Domain/Bloom.Domain.csproj" />
+  </ItemGroup>
+</Project>

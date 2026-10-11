@@ -1,0 +1,242 @@
+{
+  "info": {
+    "name": "Bloom API",
+    "description": "Вхід seed-користувачів, реєстрація з фото та перевірка JWT. Спершу запусти API: npm run api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5050"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Login — admin (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test('повертає користувача з БД', () => pm.expect(body.user.email).to.eql('admin@gmail.com'));",
+              "pm.test('повертає JWT', () => pm.expect(body.token.split('.')).to.have.lengthOf(3));",
+              "pm.collectionVariables.set('token', body.token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"admin@gmail.com\",\"password\":\"123456\"}"
+        }
+      }
+    },
+    {
+      "name": "Login — Олена (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('200 OK', () => pm.response.to.have.status(200));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"olena@gmail.com\",\"password\":\"olena123\"}"
+        }
+      }
+    },
+    {
+      "name": "Login — неправильний пароль (401)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"admin@gmail.com\",\"password\":\"incorrect\"}"
+        }
+      }
+    },
+    {
+      "name": "Login — користувача немає в БД (401)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"nobody@gmail.com\",\"password\":\"123456\"}"
+        }
+      }
+    },
+    {
+      "name": "Register — з фото (201)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('201 Created', () => pm.response.to.have.status(201));",
+              "const body = pm.response.json();",
+              "pm.test('повертає JWT', () => pm.expect(body.token.split('.')).to.have.lengthOf(3));",
+              "pm.test('повертає адресу фото', () => pm.expect(body.user.photo).to.match(/^\\/uploads\\//));",
+              "pm.collectionVariables.set('token', body.token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/register",
+        "description": "У полі photo обери файл зображення (JPEG, PNG або WebP до 5 МБ). Пошта має бути унікальною: повторний запит поверне 409.",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Богдан",
+              "type": "text"
+            },
+            {
+              "key": "email",
+              "value": "bohdan-{{$timestamp}}@example.com",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "my-password-123",
+              "type": "text"
+            },
+            {
+              "key": "photo",
+              "type": "file",
+              "src": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Register — без фото (400)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('400 Bad Request', () => pm.response.to.have.status(400));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/auth/register",
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Богдан",
+              "type": "text"
+            },
+            {
+              "key": "email",
+              "value": "no-photo@example.com",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "my-password-123",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Профіль за токеном (200)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": ["pm.test('200 OK', () => pm.response.to.have.status(200));"]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/me"
+      }
+    }
+  ]
+}

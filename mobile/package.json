@@ -8,18 +8,26 @@
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "api": "dotnet run --project ../backend/Bloom.API --launch-profile http",
+    "test:api": "node ../backend/scripts/test-api.mjs"
   },
   "dependencies": {
-    "nativewind": "latest",
-    "react-native-reanimated": "4.3.1",
-    "react-native-worklets": "0.8.3",
-    "react-native-safe-area-context": "~5.7.0",
     "expo": "~56.0.4",
+    "expo-image-picker": "~56.0.25",
+    "expo-secure-store": "~56.0.4",
     "expo-splash-screen": "~56.0.10",
     "expo-status-bar": "~56.0.4",
+    "nativewind": "4.2.7",
     "react": "19.2.3",
-    "react-native": "0.85.3"
+    "react-dom": "19.2.3",
+    "react-native": "0.85.3",
+    "react-native-reanimated": "4.3.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.8.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -28,10 +36,11 @@
     "eslint-config-expo": "~56.0.4",
     "eslint-config-prettier": "^10.1.2",
     "prettier": "^3.2.5",
-    "tailwindcss": "^3.4.0",
+    "tailwindcss": "^3.4.17",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "babel-preset-expo": "~56.0.20"
   },
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.ts",
   "private": true
 }

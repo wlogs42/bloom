@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:5050
+
+### Test user's successful login: 200
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{"email":"admin@gmail.com","password":"123456"}
+
+### Second seeded user's login: 200
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{"email":"olena@gmail.com","password":"olena123"}
+
+### Incorrect password: 401
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{"email":"admin@gmail.com","password":"incorrect"}
+
+### Registration with a photo: 201 with a JWT (409 if email already exists)
+POST {{baseUrl}}/api/auth/register
+Content-Type: multipart/form-data; boundary=bloom
+
+--bloom
+Content-Disposition: form-data; name="name"
+
+Богдан
+--bloom
+Content-Disposition: form-data; name="email"
+
+bohdan@example.com
+--bloom
+Content-Disposition: form-data; name="password"
+
+my-password-123
+--bloom
+Content-Disposition: form-data; name="photo"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+< ./photo.jpg
+--bloom--
